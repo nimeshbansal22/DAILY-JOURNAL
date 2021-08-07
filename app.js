@@ -10,7 +10,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
-const mongoose=require("mongoose");
+const mongoose = require("mongoose");
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
@@ -40,18 +40,18 @@ mongoose.connect("mongodb+srv://admin-Nimesh:nimesh1099@cluster0.zolfk.mongodb.n
 
 mongoose.set('useCreateIndex', true);
 
-const postSchema= new mongoose.Schema({
-  email:String,
-  password:String,
-  googleId:String,
-  title:String,
-  post:String
+const postSchema = new mongoose.Schema({
+  email: String,
+  password: String,
+  googleId: String,
+  title: String,
+  post: String
 });
 
 postSchema.plugin(passportLocalMongoose);
 postSchema.plugin(findOrCreate);
 
-const Post=mongoose.model("blogs",postSchema);
+const Post = mongoose.model("blogs", postSchema);
 
 passport.use(Post.createStrategy());
 
@@ -94,7 +94,7 @@ app.get("/", function(req, res) {
       if (founduser) {
         res.render("home", {
           userPost: founduser,
-          content:homeStartingContent
+          content: homeStartingContent
         });
       }
     }
@@ -137,19 +137,17 @@ app.get("/compose", function(req, res) {
 });
 
 app.post("/compose", function(req, res) {
-  const publishtitle=req.body.posttitle;
-  const publishpost=req.body.postbody;
+  const publishtitle = req.body.posttitle;
+  const publishpost = req.body.postbody;
 
-  Post.findById(req.user.id,function(err,foundUser){
-    if(err)
-    {
+  Post.findById(req.user.id, function(err, foundUser) {
+    if (err) {
       console.log(err);
-    }
-    else{
-      if(foundUser){
-        foundUser.title=publishtitle;
-        foundUser.post=publishpost;
-        foundUser.save(function(){
+    } else {
+      if (foundUser) {
+        foundUser.title = publishtitle;
+        foundUser.post = publishpost;
+        foundUser.save(function() {
           res.redirect("/");
         })
       }
@@ -157,20 +155,20 @@ app.post("/compose", function(req, res) {
   });
 });
 
-app.get("/logout",function(req,res){
+app.get("/logout", function(req, res) {
   req.logout();
   res.redirect("/");
 });
 
-app.get("/signinUI",function(req,res){
+app.get("/signinUI", function(req, res) {
   res.render("signinUI");
 });
 
-app.get("/register",function(req,res){
+app.get("/register", function(req, res) {
   res.render("register");
 });
 
-app.post("/register",function(req,res){
+app.post("/register", function(req, res) {
   Post.register({
     username: req.body.username
   }, req.body.password, function(err, user) {
@@ -186,11 +184,11 @@ app.post("/register",function(req,res){
 })
 
 
-app.get("/login",function(req,res){
+app.get("/login", function(req, res) {
   res.render("login");
 });
 
-app.post("/login",function(req,res){
+app.post("/login", function(req, res) {
   const user = new Post({
     username: req.body.username,
     password: req.body.password
@@ -211,11 +209,14 @@ app.post("/login",function(req,res){
 
 
 app.get('/post/:postid', function(req, res) {
-  const requestedpostid=req.params.postid;
-  Post.findOne({_id:requestedpostid},function(err,posts){
-    res.render("post",{
-      postkatitle:posts.title,
-      postkacontent:posts.post});
+  const requestedpostid = req.params.postid;
+  Post.findOne({
+    _id: requestedpostid
+  }, function(err, posts) {
+    res.render("post", {
+      postkatitle: posts.title,
+      postkacontent: posts.post
+    });
   });
 });
 
